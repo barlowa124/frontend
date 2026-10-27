@@ -12,9 +12,9 @@ const apiSources = apiOrigin ? ` ${apiOrigin}` : ""
 
 const contentSecurityPolicy = [
   "default-src 'self'",
-  // Next 14 does not propagate a nonce to its own hydration scripts, so
-  // inline scripts must stay allowed. connect-src and form-action still
-  // block exfiltration to non-allowlisted origins.
+  // This static-header policy has no per-request nonce. Inline scripts
+  // remain allowed for hydration; nonce-based middleware can tighten this.
+  // Network and form restrictions provide only partial exfiltration defense.
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
