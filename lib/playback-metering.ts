@@ -19,6 +19,7 @@
 // Protection". Tokens live 180s, rotate at rotate_after_seconds, and minting a
 // new one invalidates the previous. Stream URLs are never persisted or logged.
 
+import { authService } from "./auth"
 import { throwIfEntitlementDenied } from "./entitlements"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api"
@@ -146,7 +147,7 @@ function getAuthHeaders(): Record<string, string> {
 
 // keepalive lets beats/ends survive tab hide and unload; sendBeacon is not an
 // option because SimpleJWT needs the Authorization header.
-function post(path: string, body: object): Promise<Response> {
+function send(path: string, body: object): Promise<Response> {
   return fetch(`${API_BASE_URL}${path}`, {
     method: "POST",
     keepalive: true,
@@ -156,6 +157,33 @@ function post(path: string, body: object): Promise<Response> {
     },
     body: JSON.stringify(body),
   })
+}
+
+// Access tokens expire mid-listen. Refresh once and retry on 401 so a
+// continuous session keeps metering instead of silently dropping every beat
+// until reload. Concurrent 401s share the in-flight refresh — a second
+// refresh with a just-rotated (now blacklisted) token would clear the
+// session outright.
+let refreshInFlight: Promise<unknown> | null = null
+
+function refreshAccessToken(): Promise<unknown> {
+  if (!refreshInFlight) {
+    refreshInFlight = authService.refreshToken().finally(() => {
+      refreshInFlight = null
+    })
+  }
+  return refreshInFlight
+}
+
+async function post(path: string, body: object): Promise<Response> {
+  const response = await send(path, body)
+  if (response.status !== 401) return response
+  try {
+    await refreshAccessToken()
+  } catch {
+    return response
+  }
+  return send(path, body)
 }
 
 async function readJson(response: Response): Promise<any> {
