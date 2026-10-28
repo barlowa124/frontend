@@ -8,6 +8,7 @@ import {
   toProgress,
   type GatewayProgress,
 } from "@/lib/gateway-quiz"
+import { SessionScope } from "@/lib/session-scope"
 
 interface GatewayContextType {
   // Null until the first status load; the chrome indicator hides while null.
@@ -20,29 +21,44 @@ const GatewayContext = createContext<GatewayContextType | undefined>(undefined)
 
 export function GatewayProvider({ children }: { children: ReactNode }) {
   const { user, consentsAccepted } = useAuth()
+  const [scope] = useState(() => new SessionScope())
   const [progress, setProgress] = useState<GatewayProgress | null>(null)
 
   const refresh = useCallback(async () => {
+    const session = scope.current
+    if (!session) return
     try {
       const status = await gatewayQuizService.getStatus()
-      setProgress(toProgress(status))
+      if (scope.isCurrent(session)) setProgress(toProgress(status))
     } catch {
       // Keep the last known progress; the indicator is informational only.
     }
-  }, [])
+  }, [scope])
 
   // Load progress once the user is authenticated and has consented (Gateway
   // questions only apply post-consent).
   useEffect(() => {
     if (user && consentsAccepted) {
+      // A different account must not see the previous account's progress
+      // while its own load is in flight or after it fails.
+      if (scope.activate(user.email)) setProgress(null)
       refresh()
     } else {
+      scope.deactivate()
       setProgress(null)
     }
-  }, [user, consentsAccepted, refresh])
+  }, [user, consentsAccepted, scope, refresh])
 
   // Stay in sync as answers are submitted anywhere (nudge or completion modal).
-  useEffect(() => onGatewayProgress(setProgress), [])
+  // Events carry no account identity, so apply them only while a session is
+  // active — a late event must not light the indicator after sign-out.
+  useEffect(
+    () =>
+      onGatewayProgress((next) => {
+        if (scope.current) setProgress(next)
+      }),
+    [scope],
+  )
 
   return (
     <GatewayContext.Provider value={{ progress, completed: progress?.completed ?? false, refresh }}>
