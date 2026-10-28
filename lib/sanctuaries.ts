@@ -169,8 +169,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to create sanctuary: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to create sanctuary: ${response.statusText}`)
     }
 
     return response.json()
@@ -188,8 +188,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to update sanctuary: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to update sanctuary: ${response.statusText}`)
     }
 
     return response.json()
@@ -207,8 +207,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to adjust capacity: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to adjust capacity: ${response.statusText}`)
     }
 
     return response.json()
@@ -226,8 +226,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to change status: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to change status: ${response.statusText}`)
     }
 
     return response.json()
@@ -263,8 +263,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to get membership status: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to get membership status: ${response.statusText}`)
     }
 
     return response.json()
@@ -278,8 +278,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to leave sanctuary: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to leave sanctuary: ${response.statusText}`)
     }
   }
 
@@ -309,8 +309,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to approve request: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to approve request: ${response.statusText}`)
     }
 
     return response.json()
@@ -328,8 +328,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to reject request: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to reject request: ${response.statusText}`)
     }
 
     return response.json()
@@ -361,8 +361,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to revoke membership: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to revoke membership: ${response.statusText}`)
     }
 
     return response.json()
@@ -404,8 +404,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to assign ritual: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to assign ritual: ${response.statusText}`)
     }
 
     return response.json()
@@ -419,8 +419,8 @@ class SanctuariesService {
     })
 
     if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.detail || `Failed to remove ritual: ${response.statusText}`)
+      const error = await readJson(response)
+      throw new Error(error?.detail || `Failed to remove ritual: ${response.statusText}`)
     }
   }
 
