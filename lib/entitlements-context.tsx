@@ -50,8 +50,9 @@ export function EntitlementsProvider({ children }: { children: ReactNode }) {
       return
     }
     // A different account must not see the previous account's entitlements
-    // while its own load is in flight or after it fails.
-    if (scope.activate(user.email)) setEntitlements(null)
+    // while its own load is in flight or after it fails. Key on the
+    // immutable id when present; email is editable on the account.
+    if (scope.activate(String(user.id ?? user.email))) setEntitlements(null)
     refreshEntitlements()
   }, [user, scope, refreshEntitlements])
 
