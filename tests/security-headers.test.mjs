@@ -27,7 +27,9 @@ function policyFor(apiBase) {
 
 for (const apiBase of [undefined, '/api', '/custom/api']) {
   test(`same-origin API configuration: ${String(apiBase)}`, () => {
-    assert.deepEqual(policyFor(apiBase).get('connect-src'), ["'self'"])
+    const policy = policyFor(apiBase)
+    assert.deepEqual(policy.get('connect-src'), ["'self'"])
+    assert.deepEqual(policy.get('img-src'), ["'self'", 'data:', 'blob:'])
   })
 }
 
@@ -36,6 +38,7 @@ for (const apiBase of ['https://api.example.test/api/', 'http://localhost:8000/a
     const origin = new URL(apiBase).origin
     const policy = policyFor(apiBase)
     assert.deepEqual(policy.get('connect-src'), ["'self'", origin])
+    assert.ok(policy.get('img-src').includes(origin))
     assert.ok(policy.get('media-src').includes(origin))
     assert.ok(!policy.get('connect-src').includes(apiBase), 'allow an origin, not a path')
   })

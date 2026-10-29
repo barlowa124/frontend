@@ -17,7 +17,8 @@ const contentSecurityPolicy = [
   // Network and form restrictions provide only partial exfiltration defense.
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  // Avatars and listing art arrive as absolute URLs on the API origin.
+  `img-src 'self' data: blob:${apiSources}`,
   "font-src 'self' data:",
   `connect-src 'self'${apiSources}`,
   // Stream grants return presigned URLs on a host the backend controls,
