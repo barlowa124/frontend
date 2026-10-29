@@ -179,3 +179,96 @@ test('session end refreshes and retries instead of dropping the close', async ()
   assert.equal(endRequests.length, 2)
   assert.equal(endRequests[1].headers.Authorization, 'Bearer a2')
 })
+
+// JWT-shaped tokens so post() can compare account identity across a 401.
+const jwt = (userId, jti = 'j') =>
+  `h.${Buffer.from(JSON.stringify({ user_id: userId, jti })).toString('base64url')}.s`
+
+test('a delayed 401 after an account switch is not refreshed or retried', async () => {
+  store.set('access_token', jwt('acct-a', 't1'))
+  store.set('refresh_token', 'r1')
+  const meter = new PlaybackMeter(() => 0)
+
+  pending.push(reply(401))
+  const started = meter.start(5)
+  // The account changed while the start request was in flight
+  store.set('access_token', jwt('acct-b', 't2'))
+  store.set('refresh_token', 'r2')
+  await started
+
+  assert.equal(requests.length, 1)
+  assert.equal(refreshRequests().length, 0)
+  assert.equal(meter.activeSessionId, null)
+  assert.equal(meter.listening, true)
+
+  meter.end()
+})
+
+test('a 401 after sign-out is not refreshed or retried', async () => {
+  store.set('access_token', jwt('acct-a', 't1'))
+  store.set('refresh_token', 'r1')
+  const meter = new PlaybackMeter(() => 0)
+
+  pending.push(reply(401))
+  const started = meter.start(5)
+  store.delete('access_token')
+  store.delete('refresh_token')
+  await started
+
+  assert.equal(requests.length, 1)
+  assert.equal(refreshRequests().length, 0)
+
+  meter.end()
+})
+
+test('a rotation for the same account still refreshes and retries', async () => {
+  store.set('access_token', jwt('acct-a', 't1'))
+  store.set('refresh_token', 'r1')
+  const meter = new PlaybackMeter(() => 0)
+
+  pending.push(reply(401))
+  const started = meter.start(5)
+  // A concurrent request refreshed first: token rotated, same account
+  store.set('access_token', jwt('acct-a', 't2'))
+  pending.push(reply(200, { access: jwt('acct-a', 't3') }))
+  pending.push(reply(200, { session_id: 7, heartbeat_interval_seconds: 25 }))
+  await started
+
+  assert.equal(requests.length, 3)
+  assert.equal(refreshRequests().length, 1)
+  assert.equal(requests[2].headers.Authorization, `Bearer ${jwt('acct-a', 't3')}`)
+  assert.equal(meter.activeSessionId, 7)
+
+  pending.push(reply(200))
+  meter.end()
+  await flush()
+})
+
+test('a refresh resolving under a different account still blocks the retry', async () => {
+  store.set('access_token', jwt('acct-a', 't1'))
+  store.set('refresh_token', 'r1')
+  const meter = new PlaybackMeter(() => 0)
+
+  pending.push(reply(401))
+  // The refresh minted a token for another session, not the sender's
+  pending.push(reply(200, { access: jwt('acct-b', 't9') }))
+  await meter.start(5)
+
+  assert.equal(requests.length, 2)
+  assert.equal(refreshRequests().length, 1)
+  assert.equal(meter.activeSessionId, null)
+
+  meter.end()
+})
+
+test('an unauthenticated request is not refreshed or retried after a 401', async () => {
+  const meter = new PlaybackMeter(() => 0)
+
+  pending.push(reply(401))
+  await meter.start(5)
+
+  assert.equal(requests.length, 1)
+  assert.equal(refreshRequests().length, 0)
+
+  meter.end()
+})
