@@ -1,5 +1,6 @@
 import { PLAN_MARKETING_NAMES } from "./plans"
 import { throwIfEntitlementDenied } from "./entitlements"
+import { clearDeviceId } from "./device-identity"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "/api"
 
@@ -603,6 +604,9 @@ class AuthService {
   logout() {
     localStorage.removeItem("access_token")
     localStorage.removeItem("refresh_token")
+    // The metering device id is scoped to one signed-in session, so accounts
+    // that share a browser cannot be linked through it.
+    clearDeviceId()
     document.cookie = `session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`
   }
 
