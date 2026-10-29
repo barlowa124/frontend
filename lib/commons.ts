@@ -227,7 +227,7 @@ export async function fetchListings(filters: ListingFilters = {}): Promise<Listi
 }
 
 export async function fetchListing(id: number): Promise<Listing> {
-  const res = await fetch(`${API_BASE_URL}/commons/listings/${id}/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/listings/${encodeURIComponent(id)}/`, {
     headers: getAuthHeaders(),
   })
   if (!res.ok) throw await toCommonsError(res, "Failed to load this listing")
@@ -240,7 +240,7 @@ export async function checkoutListing(
   id: number,
   urls: { success_url: string; cancel_url: string },
 ): Promise<CheckoutResult> {
-  const res = await fetch(`${API_BASE_URL}/commons/listings/${id}/checkout/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/listings/${encodeURIComponent(id)}/checkout/`, {
     method: "POST",
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(urls),
@@ -294,7 +294,7 @@ export async function updateListing(
   id: number,
   patch: Partial<ListingDraftInput>,
 ): Promise<MyListing> {
-  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${id}/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${encodeURIComponent(id)}/`, {
     method: "PATCH",
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(patch),
@@ -304,7 +304,7 @@ export async function updateListing(
 }
 
 export async function submitForReview(id: number): Promise<MyListing> {
-  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${id}/submit-for-review/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${encodeURIComponent(id)}/submit-for-review/`, {
     method: "POST",
     headers: getAuthHeaders(),
   })
@@ -313,7 +313,7 @@ export async function submitForReview(id: number): Promise<MyListing> {
 }
 
 export async function pauseListing(id: number): Promise<MyListing> {
-  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${id}/pause/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${encodeURIComponent(id)}/pause/`, {
     method: "POST",
     headers: getAuthHeaders(),
   })
@@ -322,7 +322,7 @@ export async function pauseListing(id: number): Promise<MyListing> {
 }
 
 export async function resumeListing(id: number): Promise<MyListing> {
-  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${id}/resume/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/my-listings/${encodeURIComponent(id)}/resume/`, {
     method: "POST",
     headers: getAuthHeaders(),
   })
@@ -338,7 +338,7 @@ export interface GiftInput {
 }
 
 export async function giftListing(id: number, input: GiftInput): Promise<Gift> {
-  const res = await fetch(`${API_BASE_URL}/commons/listings/${id}/gift/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/listings/${encodeURIComponent(id)}/gift/`, {
     method: "POST",
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(input),
@@ -364,7 +364,7 @@ export type ReviewDecision =
   | { decision: "reject"; note: string }
 
 export async function submitReviewDecision(id: number, body: ReviewDecision): Promise<any> {
-  const res = await fetch(`${API_BASE_URL}/commons/review-queue/${id}/decision/`, {
+  const res = await fetch(`${API_BASE_URL}/commons/review-queue/${encodeURIComponent(id)}/decision/`, {
     method: "POST",
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(body),

@@ -230,7 +230,7 @@ class AuthService {
   }
 
   async activate(code: string) {
-    const response = await fetch(`${API_BASE_URL}/auth/activate/${code}/`)
+    const response = await fetch(`${API_BASE_URL}/auth/activate/${encodeURIComponent(code)}/`)
 
     if (!response.ok) {
       const error = await response.json()
@@ -324,7 +324,7 @@ class AuthService {
   }
 
   async approveRoleRequest(id: number) {
-    const response = await fetch(`${API_BASE_URL}/admin/role-requests/${id}/approve/`, {
+    const response = await fetch(`${API_BASE_URL}/admin/role-requests/${encodeURIComponent(id)}/approve/`, {
       method: "POST",
       headers: this.getAuthHeaders(),
     })
@@ -337,7 +337,7 @@ class AuthService {
   }
 
   async rejectRoleRequest(id: number) {
-    const response = await fetch(`${API_BASE_URL}/admin/role-requests/${id}/reject/`, {
+    const response = await fetch(`${API_BASE_URL}/admin/role-requests/${encodeURIComponent(id)}/reject/`, {
       method: "POST",
       headers: this.getAuthHeaders(),
     })
@@ -377,7 +377,7 @@ class AuthService {
   }
 
   async updateRitual(id: number, data: Partial<RitualUpload>): Promise<Ritual> {
-    const response = await fetch(`${API_BASE_URL}/rituals/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/rituals/${encodeURIComponent(id)}/`, {
       method: "PATCH",
       headers: {
         ...this.getAuthHeaders(),
@@ -394,7 +394,7 @@ class AuthService {
   }
 
   async deleteRitual(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/rituals/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/rituals/${encodeURIComponent(id)}/`, {
       method: "DELETE",
       headers: this.getAuthHeaders(),
     })
@@ -405,7 +405,7 @@ class AuthService {
   }
 
   async getRitualAnalytics(id: number): Promise<RitualAnalytics> {
-    const response = await fetch(`${API_BASE_URL}/rituals/${id}/analytics/`, {
+    const response = await fetch(`${API_BASE_URL}/rituals/${encodeURIComponent(id)}/analytics/`, {
       headers: this.getAuthHeaders(),
     })
 
@@ -417,7 +417,7 @@ class AuthService {
   }
 
   async getRitualFeedback(id: number): Promise<RitualFeedback[]> {
-    const response = await fetch(`${API_BASE_URL}/rituals/${id}/feedback/`, {
+    const response = await fetch(`${API_BASE_URL}/rituals/${encodeURIComponent(id)}/feedback/`, {
       headers: this.getAuthHeaders(),
     })
 
@@ -450,7 +450,7 @@ class AuthService {
   }
 
   getRitualStreamUrl(id: number): string {
-    return `${API_BASE_URL}/rituals/${id}/stream/`
+    return `${API_BASE_URL}/rituals/${encodeURIComponent(id)}/stream/`
   }
 
   async blessRitual(ritualId: number): Promise<Blessing> {
@@ -514,7 +514,7 @@ class AuthService {
   }
 
   async updatePlayProgress(playId: number, currentTime: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/analytics/plays/${playId}/progress/`, {
+    const response = await fetch(`${API_BASE_URL}/analytics/plays/${encodeURIComponent(playId)}/progress/`, {
       method: "POST",
       headers: {
         ...this.getAuthHeaders(),
@@ -529,7 +529,7 @@ class AuthService {
   }
 
   async completePlaySession(playId: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/analytics/plays/${playId}/complete/`, {
+    const response = await fetch(`${API_BASE_URL}/analytics/plays/${encodeURIComponent(playId)}/complete/`, {
       method: "POST",
       headers: this.getAuthHeaders(),
     })
@@ -742,7 +742,7 @@ class AuthService {
   }
 
   async reviewRitual(ritualId: number, action: "approve" | "reject", note?: string): Promise<ReviewResponse> {
-    const response = await fetch(`${API_BASE_URL}/moderations/rituals/${ritualId}/review/`, {
+    const response = await fetch(`${API_BASE_URL}/moderations/rituals/${encodeURIComponent(ritualId)}/review/`, {
       method: "POST",
       headers: {
         ...this.getAuthHeaders(),

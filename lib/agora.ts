@@ -134,7 +134,7 @@ class AgoraService {
   }
 
   async getCircles(sanctuaryId: number): Promise<CirclesResponse> {
-    const response = await fetch(`${API_BASE_URL}/agora/sanctuaries/${sanctuaryId}/circles/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/sanctuaries/${encodeURIComponent(sanctuaryId)}/circles/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -147,7 +147,7 @@ class AgoraService {
   }
 
   async createCircle(sanctuaryId: number, payload: { title: string; description?: string }): Promise<Circle> {
-    const response = await fetch(`${API_BASE_URL}/agora/sanctuaries/${sanctuaryId}/circles/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/sanctuaries/${encodeURIComponent(sanctuaryId)}/circles/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -173,7 +173,7 @@ class AgoraService {
   }
 
   async archiveCircle(circleId: number): Promise<Circle> {
-    const response = await fetch(`${API_BASE_URL}/agora/circles/${circleId}/archive/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/circles/${encodeURIComponent(circleId)}/archive/`, {
       method: "POST",
       headers: this.getHeaders(),
     })
@@ -191,7 +191,7 @@ class AgoraService {
     const params = new URLSearchParams({ limit: String(limit) })
     if (before != null) params.set("before", String(before))
 
-    const response = await fetch(`${API_BASE_URL}/agora/circles/${circleId}/posts/?${params}`, {
+    const response = await fetch(`${API_BASE_URL}/agora/circles/${encodeURIComponent(circleId)}/posts/?${params}`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -204,7 +204,7 @@ class AgoraService {
   }
 
   async createPost(circleId: number, body: string): Promise<AgoraPost> {
-    const response = await fetch(`${API_BASE_URL}/agora/circles/${circleId}/posts/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/circles/${encodeURIComponent(circleId)}/posts/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -221,7 +221,7 @@ class AgoraService {
   }
 
   async createReply(postId: number, body: string): Promise<AgoraReply> {
-    const response = await fetch(`${API_BASE_URL}/agora/posts/${postId}/replies/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/posts/${encodeURIComponent(postId)}/replies/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -238,7 +238,7 @@ class AgoraService {
   }
 
   async blessPost(postId: number): Promise<{ blessed: boolean; blessing_count: number }> {
-    const response = await fetch(`${API_BASE_URL}/agora/posts/${postId}/bless/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/posts/${encodeURIComponent(postId)}/bless/`, {
       method: "POST",
       headers: this.getHeaders(),
     })
@@ -251,11 +251,11 @@ class AgoraService {
   }
 
   async flagPost(postId: number, payload: FlagPayload): Promise<FlagResponse> {
-    return this.flag(`${API_BASE_URL}/agora/posts/${postId}/flag/`, payload)
+    return this.flag(`${API_BASE_URL}/agora/posts/${encodeURIComponent(postId)}/flag/`, payload)
   }
 
   async flagReply(replyId: number, payload: FlagPayload): Promise<FlagResponse> {
-    return this.flag(`${API_BASE_URL}/agora/replies/${replyId}/flag/`, payload)
+    return this.flag(`${API_BASE_URL}/agora/replies/${encodeURIComponent(replyId)}/flag/`, payload)
   }
 
   private async flag(url: string, payload: FlagPayload): Promise<FlagResponse> {
@@ -276,7 +276,7 @@ class AgoraService {
   }
 
   async removePost(postId: number): Promise<RemovalResponse> {
-    const response = await fetch(`${API_BASE_URL}/agora/posts/${postId}/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/posts/${encodeURIComponent(postId)}/`, {
       method: "DELETE",
       headers: this.getHeaders(),
     })
@@ -289,7 +289,7 @@ class AgoraService {
   }
 
   async removeReply(replyId: number): Promise<RemovalResponse> {
-    const response = await fetch(`${API_BASE_URL}/agora/replies/${replyId}/`, {
+    const response = await fetch(`${API_BASE_URL}/agora/replies/${encodeURIComponent(replyId)}/`, {
       method: "DELETE",
       headers: this.getHeaders(),
     })

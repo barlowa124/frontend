@@ -141,7 +141,7 @@ class SanctuariesService {
   // stewards — including its former owner — so callers must treat 404 as
   // "gone" and route back to the list rather than assuming an auth problem.
   async getSanctuaryDetail(id: number): Promise<Sanctuary> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -178,7 +178,7 @@ class SanctuariesService {
 
   // Update sanctuary
   async updateSanctuary(id: number, payload: UpdateSanctuaryPayload): Promise<Sanctuary> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/`, {
       method: "PATCH",
       headers: {
         ...this.getHeaders(),
@@ -197,7 +197,7 @@ class SanctuariesService {
 
   // Adjust capacity and open join
   async adjustCapacity(id: number, payload: CapacityPayload): Promise<Sanctuary> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/capacity/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/capacity/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -216,7 +216,7 @@ class SanctuariesService {
 
   // Change sanctuary status
   async changeSanctuaryStatus(id: number, payload: StatusPayload): Promise<Sanctuary> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/status/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/status/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -235,7 +235,7 @@ class SanctuariesService {
 
   // Request to join sanctuary
   async requestJoin(id: number, payload?: JoinRequestPayload): Promise<Membership> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/join-request/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/join-request/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -257,7 +257,7 @@ class SanctuariesService {
 
   // Get current user's membership status
   async getMembershipStatus(id: number): Promise<Membership> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/membership/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/membership/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -272,7 +272,7 @@ class SanctuariesService {
 
   // Leave sanctuary
   async leaveSanctuary(id: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/membership/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/membership/`, {
       method: "DELETE",
       headers: this.getHeaders(),
     })
@@ -285,7 +285,7 @@ class SanctuariesService {
 
   // Get pending join requests (creator only)
   async getPendingRequests(id: number): Promise<Membership[]> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/requests/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/requests/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -299,7 +299,7 @@ class SanctuariesService {
 
   // Approve join request
   async approveRequest(id: number, membershipId: number, payload?: ApproveRejectPayload): Promise<Membership> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/requests/${membershipId}/approve/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/requests/${encodeURIComponent(membershipId)}/approve/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -318,7 +318,7 @@ class SanctuariesService {
 
   // Reject join request
   async rejectRequest(id: number, membershipId: number, payload?: ApproveRejectPayload): Promise<Membership> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/requests/${membershipId}/reject/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/requests/${encodeURIComponent(membershipId)}/reject/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -337,7 +337,7 @@ class SanctuariesService {
 
   // Get approved members
   async getApprovedMembers(id: number): Promise<Membership[]> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/members/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/members/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -351,7 +351,7 @@ class SanctuariesService {
 
   // Revoke membership
   async revokeMembership(id: number, membershipId: number, payload?: ApproveRejectPayload): Promise<Membership> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/members/${membershipId}/revoke/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/members/${encodeURIComponent(membershipId)}/revoke/`, {
       method: "POST",
       headers: {
         ...this.getHeaders(),
@@ -370,7 +370,7 @@ class SanctuariesService {
 
   // Get audit log
   async getAuditLog(id: number): Promise<AuditLogEntry[]> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/audits/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/audits/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -384,7 +384,7 @@ class SanctuariesService {
 
   // Get assigned rituals
   async getAssignedRituals(id: number): Promise<RitualAssignment[]> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/rituals/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/rituals/`, {
       method: "GET",
       headers: this.getHeaders(),
     })
@@ -398,7 +398,7 @@ class SanctuariesService {
 
   // Assign ritual
   async assignRitual(id: number, ritualId: number): Promise<RitualAssignment> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/rituals/${ritualId}/assign/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/rituals/${encodeURIComponent(ritualId)}/assign/`, {
       method: "POST",
       headers: this.getHeaders(),
     })
@@ -413,7 +413,7 @@ class SanctuariesService {
 
   // Remove ritual assignment
   async removeRitualAssignment(id: number, ritualId: number): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/rituals/${ritualId}/assign/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/rituals/${encodeURIComponent(ritualId)}/assign/`, {
       method: "DELETE",
       headers: this.getHeaders(),
     })
@@ -435,7 +435,7 @@ class SanctuariesService {
    * `already_removed` means someone else got there first.
    */
   async getRemovalConsequences(id: number): Promise<RemovalConsequences> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/remove/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/remove/`, {
       method: "POST",
       headers: { ...this.getHeaders(), "Content-Type": "application/json" },
       body: "{}",
@@ -465,7 +465,7 @@ class SanctuariesService {
    * restored by a restore.
    */
   async removeSanctuary(id: number): Promise<RemovalResult> {
-    const response = await fetch(`${API_BASE_URL}/sanctuaries/${id}/remove/`, {
+    const response = await fetch(`${API_BASE_URL}/sanctuaries/${encodeURIComponent(id)}/remove/`, {
       method: "POST",
       headers: { ...this.getHeaders(), "Content-Type": "application/json" },
       body: JSON.stringify({ acknowledge: true }),
